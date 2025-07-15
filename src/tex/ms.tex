@@ -17,10 +17,11 @@
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}% Definig a custom style:
+\definecolor{navyblue}{rgb}{0.0, 0.0, 0.5}
 \lstdefinestyle{mystyle}{
     backgroundcolor=\color{backcolour},   
     commentstyle=\color{codepurple},
-    keywordstyle=\color{NavyBlue},
+    keywordstyle=\color{navyblue},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\ttfamily\footnotesize\bfseries,
@@ -40,55 +41,49 @@
 
 \begin{document}
 
-\title{showyourwork! for open science}
+\title{\showyourwork for open science}
 
 \subtitle{Test cases}
 
 \author{Giovanni Picogna}
 
-\institute{Ludwig-Maximilians-Universit\:at M\:unchen, USM, Munich, Germany\\ \email{picogna@usm.lmu.de}}
+\institute{Universit\"ats-Sternwarte, Ludwig-Maximilians-Universit\"at M\"unchen, Scheinerstr. 1, M\"unchen, 81679, Bayern, Germany\\
+             \email{picogna@usm.lmu.de}}
 
 \date{Received 14 July 2025 / Accepted 14 July 2025}
 
-\abstract {} {We look for characteristics typical of water-megamaser galaxies
-in SO 103-G035, TXS 2226-184, and IC 1481.} {We obtained long-slit optical
-emission-line spectra.} {We present rotation curves, line ratios, electron
-densities, temperatures. IC 1481 reveals a spectrum suggestive of a vigorous
-starburst in the central kiloparsec 108 years ago.} {We do not find any hints
-for outflows nor special features which could give clues to the unknown
-megamaser excitation mechanism.}
+\abstract {} {I provide some easy to follow instructions to set-up your first \showyourwork project}
+{This is not at all a complete guide, for which I point the readers at the well written documentation on https://show-your.work/}
+{}{}{}
 
-\keywords{interstellar medium: jets and outflows --
-  interstellar medium: molecules -- stars: pre-main-sequence}
+\keywords{open science}
+
 \maketitle 
 
 % Main body with filler text
 \section{Installation}
 \label{sec:intro}
-\begin{itemize}
-\item showyourwork! requires Python <3.11, >=3.8 in the current development version.
-\item we can start by creating a conda environment with python 3.10
+\showyourwork requires Python <3.11, >=3.8 in the current development version. We can start by creating a conda environment with python 3.10
   \begin{lstlisting}[language=bash]
     conda create -n python310 python=3.10 anaconda
   \end{lstlisting}
-\item and activate it
+activate it
   \begin{lstlisting}[language=bash]
     conda activate python310
   \end{lstlisting}
-\item and install the development version from github
+and install the development version from github
   \begin{lstlisting}[language=bash]
     pip install git+https://github.com/showyourwork/showyourwork
   \end{lstlisting}
-\end{itemize}
 
 \section{First paper}
-\begin{itemize}
-\item in order to set up your first paper you need to run
+\subsection{Local build}
+In order to set up your first paper you need to run
   \begin{lstlisting}[language=bash]
     showyourwork setup ${GITHUB_USER}/${GITHUB-REPO}
   \end{lstlisting}
-\item and create the related repo on github (follow the instruction on screen - you can add the caching support on Zenodo and the Overleaf connection also in a second step)
-\item A working environment.yml for the conda environment is:
+and create the related repo on github (follow the instruction on screen - you can add the caching support on Zenodo and the Overleaf connection also in a second step)
+A working \texttt{environment.yml} for the conda environment is:
   \begin{lstlisting}[language=bash]
     channels:
       - conda-forge
@@ -100,15 +95,14 @@ megamaser excitation mechanism.}
       - pip:
         - matplotlib==3.10
   \end{lstlisting}
-\item you can then build first your paper locally
+You can then build first your paper locally
   \begin{lstlisting}[language=bash]
     showyourwork build
   \end{lstlisting} 
-\item and check the resulting ms.pdf file in the root directory for the final result.
-\end{itemize}
-\subsection{Building on github}
-\begin{itemize}
-\item In order to build it on github thorugh github actions you need first to include/substitute in the files \texttt{build.yml} and \texttt{build-pull-request.yml} under the directory \texttt{.github/workflows} the following lines:
+and check the resulting ms.pdf file in the root directory for the final result.
+
+\subsection{Remote build on github}
+In order to build it on github with github actions you need first to include/substitute in the files \texttt{build.yml} and \texttt{build-pull-request.yml} under the directory \texttt{.github/workflows} the following lines:
   \begin{lstlisting}[language=xml]
     - name: Build the article PDF
       id: build
@@ -119,11 +113,41 @@ megamaser excitation mechanism.}
         SANDBOX_TOKEN: ${{ secrets.SANDBOX_TOKEN }}
         OVERLEAF_TOKEN: ${{ secrets.OVERLEAF_TOKEN }}
   \end{lstlisting}
-\item add Figure script
-\item talk about snakemake and intermediate outputs
-\item add static figure
-\item setup Zenodo integration
-\end{itemize}
+then you can \texttt{git add} the changed files, commit it and push it to the remote repository.
+
+\section{Adding a figure}
+\subsection{Simple figure}
+\showyourwork does not expect you to provide directly a figure (in fact it gives an error if you do).
+It expects instead a script to generate the plot through the \texttt{script} command and, after running it, it looks for the figure obtained with it.
+Fig.~\ref{fig:random_numbers} is an example. The script \texttt{randomnumbers.py} is placed in the \texttt{src/script/} directory and called in the first line of the figure definition. After that, the figure is included normally from the predefined path.
+\begin{lstlisting}[language=TeX]
+\begin{figure}
+    \script{random_numbers.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/random_numbers.pdf}
+        \caption{
+            Plot showing a bunch of random numbers.
+        }
+        \label{fig:random_numbers}
+    \end{centering}
+\end{figure}
+\end{lstlisting}
+The script is generating and plotting some random numbers using the \texttt{numpy random} package 
+\begin{lstlisting}[language=python]
+import matplotlib.pyplot as plt
+import numpy as np
+import paths
+
+# Generate some data
+random_numbers = np.random.randn(100, 10)
+
+# Plot and save
+fig = plt.figure(figsize=(7, 6))
+plt.plot(random_numbers, 'k.')
+plt.xlabel("x")
+plt.ylabel("y")
+fig.savefig(paths.figures / "random_numbers.pdf", bbox_inches="tight", dpi=300)
+\end{lstlisting}
 
 \begin{figure}
     \script{random_numbers.py}
@@ -136,6 +160,9 @@ megamaser excitation mechanism.}
     \end{centering}
 \end{figure}
 
+\subsection{Static figure}
+It is possible that some figures are not generated from a script, i.e. an hand drawn figure or a figure from another paper. In that case \texttt{showyouwork!} provides a static directory under \texttt{src/static} where any static content can be added. In this case the figure is defined normally in \LaTeX, but the location of the figure is always within the figures folder (\showyourwork is copying it under the wood from the static directory to the \LaTeX figures directory).
+\begin{lstlisting}[language=TeX]
 \begin{figure}
     \begin{centering}
         \includegraphics[width=\linewidth]{figures/usmlogo.pdf}
@@ -145,6 +172,32 @@ megamaser excitation mechanism.}
         \label{fig:usm_logo}
     \end{centering}
 \end{figure}
+\end{lstlisting}
+
+\begin{figure}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/usmlogo.pdf}
+        \caption{
+            USM Logo.
+        }
+        \label{fig:usm_logo}
+    \end{centering}
+\end{figure}
+
+\subsection{Complex figure}
+
+\begin{lstlisting}[language=TeX]
+\begin{figure}
+    \script{figure.py}
+    \begin{centering}
+        \includegraphics[width=\linewidth]{figures/figure.pdf}
+        \caption{
+            Plot showing the result of a DustPy simulation.
+        }
+        \label{fig:simulation_dustpy}
+    \end{centering}
+\end{figure}
+\end{lstlisting}
 
 \begin{figure}
     \script{figure.py}
@@ -157,14 +210,11 @@ megamaser excitation mechanism.}
     \end{centering}
 \end{figure}
 
-Nam dui ligula, fringilla a, euismod sodales, sollici- tudin vel, wisi.
-Morbi auctor lorem non justo, nam lacus libero, pretium at, lobortis vitae.
-Donec aliquet, tortor sed accumsan bibendum, erat ligula aliquet magna.
-Morbi ac orci et nisl hendrerit mollis, suspendisse ut massa, cras nec ante.
-Pellentesque a nulla cum sociis natoque penatibus et magnis dis parturient.
-Aliquam tincidunt urna, nulla ullamcorper vestibulum turpis.
-Pellentesque cursus luctus mauris \citep{Luger2021}.
+\section{Conclusions}
 
-\bibliography{bib}
+\begin{acknowledgements}
+\end{acknowledgements}
+
+\bibliography{bib} % your references Yourfile.bib
 
 \end{document}
