@@ -1,40 +1,54 @@
 \documentclass{aa}
 \usepackage{showyourwork}
-\usepackage[varg]{txfonts}
+\usepackage{graphicx}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{subcaption}         % necessary for continued figures, example in section 3
+                                % and appendix
+\usepackage{lscape}             % to rotate a single page table, example in appendix.
+                                % For landscape tables, see the longtable examples.
+\usepackage{placeins}           % useful with \FloatBarrier, to keep 
+                                % onecolumn floats from drifting to the next section
+
+% -- Loading the code block package:
+\setlength{\parindent}{8pt}
+\usepackage{indentfirst}% -- Defining colors:
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}% Definig a custom style:
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codepurple},
+    keywordstyle=\color{NavyBlue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize\bfseries,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=t,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}% -- Setting up the custom style:
+
+\lstset{style=mystyle}
 
 \begin{document}
 
+\title{showyourwork! for open science}
 
-\title{Optimality relationships for $p$-cyclic SOR p
-  \thanks{Research supported in part by the US Air Force
-    under grant no. AFOSR-88-0285 and
-    the National Science Foundation under grant
-    no. DMS-85-21154}\fnmsep
-  \thanks{This is a second footnote}\\
-  resulting in asymptotically faster convergence\\
-  for the same amount of work per iteration}
+\subtitle{Test cases}
 
-\subtitle{II. An example text with infinitesimal
-  scientific value\\
-  whose title and subtitle may also be split}
+\author{Giovanni Picogna}
 
-\author{Daniel J. Pierce\inst{1}
-  \and Apostolos Hadjidimios\inst{2}
-  \thanks{\emph{Present address:}
-    Department of Computer Science, Purdue University,
-    West Lafayette, IN 47907, USA}
-     \and Robert J. Plemmons\inst{3}}
+\institute{Ludwig-Maximilians-Universit\:at M\:unchen, USM, Munich, Germany\\ \email{picogna@usm.lmu.de}}
 
-\offprints{R. Plemmons, \email{plemmons@...}}
-
-\institute{Boeing Computer Service, P.O. Box 24346,
-  MS 7L-21, Seattle, WA 98124-0346, USA
-  \and Department of Mathematics, University of Ioannina,
-  GR-45 1210, Ioannina, Greece
-  \and Department of Computer Science and Mathematics,
- North Carolina State University, Raleigh, NC 27695-8205, USA}
-
-\date{Received 2 November 1992 / Accepted 7 January 1993}
+\date{Received 14 July 2025 / Accepted 14 July 2025}
 
 \abstract {} {We look for characteristics typical of water-megamaser galaxies
 in SO 103-G035, TXS 2226-184, and IC 1481.} {We obtained long-slit optical
@@ -49,21 +63,67 @@ megamaser excitation mechanism.}
 \maketitle 
 
 % Main body with filler text
-\section{Introduction}
+\section{Installation}
 \label{sec:intro}
+\begin{itemize}
+\item showyourwork! requires Python <3.11, >=3.8 in the current development version.
+\item we can start by creating a conda environment with python 3.10
+  \begin{lstlisting}[language=bash]
+    conda create -n python310 python=3.10 anaconda
+  \end{lstlisting}
+\item and activate it
+  \begin{lstlisting}[language=bash]
+    conda activate python310
+  \end{lstlisting}
+\item and install the development version from github
+  \begin{lstlisting}[language=bash]
+    pip install git+https://github.com/showyourwork/showyourwork
+  \end{lstlisting}
+\end{itemize}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-Ut purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
-Curabitur dictum gravida mauris, consectetuer id, vulputate a, magna.
-Donec vehicula augue eu neque, morbi tristique senectus et netus et.
-Mauris ut leo, cras viverra metus rhoncus sem, nulla et lectus vestibulum.
-Phasellus eu tellus sit amet tortor gravida placerat.
-Integer sapien est, iaculis in, pretium quis, viverra ac, nunc.
-Praesent eget sem vel leo ultrices bibendum.
-Aenean faucibus, morbi dolor nulla, malesuada eu, pulvinar at, mollis ac.
-Curabitur auctor semper nulla donec varius orci eget risus.
-Duis nibh mi, congue eu, accumsan eleifend, sagittis quis, diam.
-Duis eget orci sit amet orci dignissim rutrum.
+\section{First paper}
+\begin{itemize}
+\item in order to set up your first paper you need to run
+  \begin{lstlisting}[language=bash]
+    showyourwork setup ${GITHUB_USER}/${GITHUB-REPO}
+  \end{lstlisting}
+\item and create the related repo on github (follow the instruction on screen - you can add the caching support on Zenodo and the Overleaf connection also in a second step)
+\item A working environment.yml for the conda environment is:
+  \begin{lstlisting}[language=bash]
+    channels:
+      - conda-forge
+      - defaults
+    dependencies:
+      - numpy=1.21
+      - pip=25.1.1
+      - python=3.10
+      - pip:
+        - matplotlib==3.10
+  \end{lstlisting}
+\item you can then build first your paper locally
+  \begin{lstlisting}[language=bash]
+    showyourwork build
+  \end{lstlisting} 
+\item and check the resulting ms.pdf file in the root directory for the final result.
+\end{itemize}
+\subsection{Building on github}
+\begin{itemize}
+\item In order to build it on github thorugh github actions you need first to include/substitute in the files \texttt{build.yml} and \texttt{build-pull-request.yml} under the directory \texttt{.github/workflows} the following lines:
+  \begin{lstlisting}[language=xml]
+    - name: Build the article PDF
+      id: build
+      with:
+        showyourwork-spec: git+https://github.com/showyourwork/showyourwork
+      uses: showyourwork/showyourwork-action@main
+      env:
+        SANDBOX_TOKEN: ${{ secrets.SANDBOX_TOKEN }}
+        OVERLEAF_TOKEN: ${{ secrets.OVERLEAF_TOKEN }}
+  \end{lstlisting}
+\item add Figure script
+\item talk about snakemake and intermediate outputs
+\item add static figure
+\item setup Zenodo integration
+\end{itemize}
 
 \begin{figure}
     \script{random_numbers.py}
