@@ -2,7 +2,7 @@ rule simulation:
     output:
         "src/data/data{group}.hdf5"
     conda:
-        "environment1.yml"
+        "environment.yml"
     cache:
         True
     params:
