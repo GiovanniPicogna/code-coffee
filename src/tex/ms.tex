@@ -206,9 +206,9 @@ Copy the token and store it somewhere secure.
 
 Then, on your local computer, create an environment variable called \texttt{\$SANDBOX\_TOKEN} with value equal to the API token you just generated.
 You can either do this manually: \texttt{export SANDBOX\_TOKEN=YYYYYY} or by adding that line to your shell config file (.bashrc, .zshrc, etc.) and re-starting your session.
-In order for \showyourwork to have access to Zenodo Sandbox when running on GitHub Actions, you’ll also have to provide this value as a secret with name \texttt{SANDBOX\_TOKEN}.
+In order for \showyourwork to have access to Zenodo Sandbox when running on GitHub Actions, you'll also have to provide this value as a secret with name \texttt{SANDBOX\_TOKEN}.
 
-If you’ve done all that, the next time you create a new article repository using \texttt{showyourwork setup}, pass the \texttt{--cache} option and \showyourwork will automatically create a Zenodo Sandbox draft deposit which it will use to cache your intermediate results. Note that you can also manually create a draft deposit by running \texttt{showyourwork cache create} after you created your article repository.
+If you've done all that, the next time you create a new article repository using \texttt{showyourwork setup}, pass the \texttt{--cache} option and \showyourwork will automatically create a Zenodo Sandbox draft deposit which it will use to cache your intermediate results. Note that you can also manually create a draft deposit by running \texttt{showyourwork cache create} after you created your article repository.
 
 \subsubsection{Intermediate results}
 
