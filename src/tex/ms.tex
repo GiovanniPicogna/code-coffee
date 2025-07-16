@@ -212,6 +212,41 @@ If you've done all that, the next time you create a new article repository using
 
 \subsubsection{Intermediate results}
 
+Earlier, we mentioned that the Zenodo integration allows users to cache intermediate results in their workflow.
+But what is an \textit{intermediate result}?
+The standard procedure for generating figures using \showyourwork is to define a figure script that generates the figure output.
+There is no intermediate step. We simply go from figure script to figure output.
+
+However, if our figure script involves some expensive simulation, every time we change anything in that script, \showyourwork will attempt to re-run the entire computation when asked to build your article.
+This is good for reproducibility but it is extremely wasteful in cases where we wish to tweak some aspect of the plot, like the color of a line.
+
+To avoid this, we can split our script into two: one that runs the simulation and saves the results, and one that loads the results and plots them.
+
+\subsubsection{A DustPy simulation}
+
+Consider a workflow that needs to run a DustPy simulation to generate a figure.
+We can define it in the \texttt{src/script} directory as \texttt{simulations.py}
+
+\begin{lstlisting}[language=python]
+from dustpy import Simulation, constants
+import paths
+
+sim = Simulation()
+sim.initialize()
+
+sim.dust.v.frag = snakemake.params["v_frag"]
+sim.dust.rhos = snakemake.params["rho_dust"]
+sim.gas.alpha = snakemake.params["alpha"]
+sim.star.M = snakemake.params["stellar_mass"]*constants.M_sun
+sim.dust.eps = snakemake.params["dust_to_gas_ratio"]
+sim.gas.Mdisk = snakemake.params["disk_mass"]*constants.M_sun
+
+sim.writer.datadir = paths.data
+sim.writer.overwrite = True
+
+sim.run()
+\end{lstlisting}
+
 \begin{lstlisting}[language=TeX]
 \begin{figure}
     \script{figure.py}
