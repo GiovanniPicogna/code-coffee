@@ -184,7 +184,33 @@ It is possible that some figures are not generated from a script, i.e. an hand d
     \end{centering}
 \end{figure}
 
-\subsection{Complex figure}
+\section{Zenodo integration}
+
+\subsection{Static datasets}
+If your workflow depends on data that cannot be programmatically generated (e.g. data collected from a telescope), that data should be made available to anyone trying to reproduce your results. Instead of committing the dataset directly to the repository, one can archive it on an online open-access file-hosting service (like Zenodo, for which \showyourwork does all the communicating back-and-forth for you). All you need to do is specify the ID of the (public) archive and some information about the files your workflow needs in the \texttt{showyourwork.yml} config file.
+
+\subsection{Dynamic datasets}
+\showyourwork can cache the results of intermediate steps in your pipeline on Zenodo or Zenodo Sandbox.
+This is useful for workflows that need running expensive simulations, etc., that a reader may not want to rerun.
+It's also useful for builds on GitHub Actions, which has limited compute resources.
+
+The way \showyourwork deals with these cases is to cache these lengthy computations on Zenodo alongside a record of all the inputs that went into generating the cached output. If, on subsequent runs of the workflow, the inputs remain unchanged, \showyourwork will simply download the cached results from Zenodo, maintaining the guarantee that the output you get follows deterministically from the given inputs.
+
+\subsubsection{Set-up the Zenodo integration}
+By default, caching takes place on Zenodo Sandbox, which is equal to Zenodo in all respects except that records on that service are temporary. This makes it perfect for caching intermediate results during the development cycle, where things are likely to change a lot and you may not want to assign a static, permanent DOI with any particular dataset.
+
+\showyourwork needs access to an API token to communicate with Zenodo Sandbox.
+You can generate it by clicking \href{https://sandbox.zenodo.org/account/settings/applications/tokens/new}{here}.
+Name the token something informative and make sure to give it \texttt{deposit:actions} and \texttt{deposit:write} permissions.
+Copy the token and store it somewhere secure.
+
+Then, on your local computer, create an environment variable called \texttt{\$SANDBOX\_TOKEN} with value equal to the API token you just generated.
+You can either do this manually: \texttt{export SANDBOX\_TOKEN=YYYYYY} or by adding that line to your shell config file (.bashrc, .zshrc, etc.) and re-starting your session.
+In order for \showyourwork to have access to Zenodo Sandbox when running on GitHub Actions, you’ll also have to provide this value as a secret with name \texttt{SANDBOX\_TOKEN}.
+
+If you’ve done all that, the next time you create a new article repository using \texttt{showyourwork setup}, pass the \texttt{--cache} option and \showyourwork will automatically create a Zenodo Sandbox draft deposit which it will use to cache your intermediate results. Note that you can also manually create a draft deposit by running \texttt{showyourwork cache create} after you created your article repository.
+
+\subsubsection{Intermediate results}
 
 \begin{lstlisting}[language=TeX]
 \begin{figure}
